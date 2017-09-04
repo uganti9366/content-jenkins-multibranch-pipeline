@@ -1,5 +1,8 @@
 pipeline {
  agent any
+ environment {
+ MAJOR_VERSION = 1
+ }
  stages {
  stage('build') {
  steps {
@@ -9,7 +12,6 @@ pipeline {
  }
  post {
  success {
-
  archiveArtifacts artifacts: 'rectangle.jar', fingerprint: true
  }
  }
@@ -37,4 +39,15 @@ pipeline {
  sh 'git push origin master'
  }
  }
+ stage('Tagging the Release') {
+ when {
+ branch 'master'
  }
+ steps {
+ sh "git tag rectangle-${env.MAJOR_VERSION}.${BUILD_NUMBER}"
+ sh "git push origin rectangle-${env.MAJOR_VERSION}.${BUILD_
+NUMBER}"
+ }
+ }
+ }
+}
